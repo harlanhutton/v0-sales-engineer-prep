@@ -160,7 +160,7 @@ export function ActionItems({ completedIds, onToggle }: ActionItemsProps) {
         const catKey = category as keyof typeof CATEGORIES
         const catInfo = CATEGORIES[catKey]
         const completed = items.filter((i) => completedIds.has(i.id)).length
-        let runningIndex = 0
+        let runningIndex = -1
 
         return (
           <div key={category} className="flex flex-col gap-0">
