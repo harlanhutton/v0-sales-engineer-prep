@@ -79,7 +79,7 @@ export default function Home() {
         activeTab={activeTab}
         onTabChange={setActiveTab}
       />
-      <main className="mx-auto max-w-5xl px-6 py-8">
+      <main className="mx-auto max-w-5xl px-6 py-10">
         {activeTab === "checklist" && (
           <ActionItems completedIds={completedIds} onToggle={toggleItem} />
         )}

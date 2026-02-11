@@ -56,111 +56,112 @@ export function MockQuestions() {
   }
 
   return (
-    <div className="flex flex-col gap-6">
-      <div className="flex items-center justify-between">
-        <h2 className="text-lg font-semibold text-foreground">
-          Mock Interview Q&A
-        </h2>
-        <div className="flex gap-1">
-          {categories.map((cat) => (
-            <button
-              key={cat}
-              onClick={() => {
-                setFilter(cat)
-                setCurrentIndex(0)
-                setShowGuidance(false)
-                setShowFramework(false)
-              }}
-              className={`rounded-md px-3 py-1 text-xs font-medium transition-colors ${
-                filter === cat
-                  ? "bg-secondary text-foreground"
-                  : "text-muted-foreground hover:text-foreground"
-              }`}
-            >
-              {categoryLabels[cat]}
-            </button>
-          ))}
-        </div>
+    <div className="flex flex-col gap-8">
+      {/* Filter */}
+      <div className="flex items-center gap-1">
+        {categories.map((cat) => (
+          <button
+            key={cat}
+            onClick={() => {
+              setFilter(cat)
+              setCurrentIndex(0)
+              setShowGuidance(false)
+              setShowFramework(false)
+            }}
+            className={`rounded-sm px-3 py-1.5 text-xs font-mono font-medium transition-colors ${
+              filter === cat
+                ? "bg-foreground text-background"
+                : "text-muted-foreground hover:text-foreground"
+            }`}
+          >
+            {categoryLabels[cat]}
+          </button>
+        ))}
       </div>
 
-      <div className="rounded-lg border border-border bg-card">
-        {/* Question header */}
-        <div className="border-b border-border px-6 py-4">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-3">
-              <span
-                className={`text-xs font-semibold tracking-wide uppercase ${catInfo.color}`}
-              >
-                {catInfo.label}
-              </span>
-              <span className="text-xs text-muted-foreground tabular-nums">
-                {currentIndex + 1} of {filteredQuestions.length}
-              </span>
-            </div>
-            <div className="flex items-center gap-1">
-              <button
-                onClick={goPrev}
-                className="rounded-md p-1.5 text-muted-foreground transition-colors hover:bg-secondary hover:text-foreground"
-                aria-label="Previous question"
-              >
-                <ChevronLeft className="h-4 w-4" />
-              </button>
-              <button
-                onClick={goNext}
-                className="rounded-md p-1.5 text-muted-foreground transition-colors hover:bg-secondary hover:text-foreground"
-                aria-label="Next question"
-              >
-                <ChevronRight className="h-4 w-4" />
-              </button>
-            </div>
+      {/* Question card */}
+      <div className="border border-border rounded-sm overflow-hidden">
+        {/* Header */}
+        <div className="flex items-center justify-between border-b border-border px-4 py-3">
+          <div className="flex items-center gap-4">
+            <span className="text-xs font-mono font-semibold tracking-widest text-muted-foreground uppercase">
+              {catInfo.label}
+            </span>
+            <span className="text-xs font-mono text-muted-foreground tabular-nums">
+              {currentIndex + 1}/{filteredQuestions.length}
+            </span>
+          </div>
+          <div className="flex items-center gap-0">
+            <button
+              onClick={goPrev}
+              className="rounded-sm p-2 text-muted-foreground transition-colors hover:text-foreground"
+              aria-label="Previous question"
+            >
+              <ChevronLeft className="h-4 w-4" />
+            </button>
+            <button
+              onClick={goNext}
+              className="rounded-sm p-2 text-muted-foreground transition-colors hover:text-foreground"
+              aria-label="Next question"
+            >
+              <ChevronRight className="h-4 w-4" />
+            </button>
           </div>
         </div>
 
-        {/* Question */}
-        <div className="px-6 py-8">
-          <p className="text-xl font-medium leading-relaxed text-foreground">
+        {/* Question body */}
+        <div className="px-6 py-10">
+          <p className="text-2xl font-mono font-medium leading-snug text-foreground tracking-tight sm:text-3xl">
             {`"${current.question}"`}
           </p>
         </div>
 
-        {/* Actions */}
-        <div className="border-t border-border px-6 py-4">
-          <div className="flex flex-wrap gap-2">
+        {/* Action bar */}
+        <div className="border-t border-border px-4 py-3">
+          <div className="flex flex-wrap gap-1">
             <button
               onClick={() => setShowGuidance(!showGuidance)}
-              className="flex items-center gap-2 rounded-md bg-secondary px-3 py-2 text-sm font-medium text-foreground transition-colors hover:bg-secondary/80"
+              className={`flex items-center gap-2 rounded-sm px-3 py-2 text-xs font-mono font-medium transition-colors ${
+                showGuidance
+                  ? "bg-foreground text-background"
+                  : "text-muted-foreground hover:text-foreground"
+              }`}
             >
               {showGuidance ? (
-                <EyeOff className="h-4 w-4" />
+                <EyeOff className="h-3.5 w-3.5" />
               ) : (
-                <Eye className="h-4 w-4" />
+                <Eye className="h-3.5 w-3.5" />
               )}
-              {showGuidance ? "Hide Guidance" : "Show Guidance"}
+              Guidance
             </button>
             <button
               onClick={() => setShowFramework(!showFramework)}
-              className="flex items-center gap-2 rounded-md bg-secondary px-3 py-2 text-sm font-medium text-foreground transition-colors hover:bg-secondary/80"
+              className={`flex items-center gap-2 rounded-sm px-3 py-2 text-xs font-mono font-medium transition-colors ${
+                showFramework
+                  ? "bg-foreground text-background"
+                  : "text-muted-foreground hover:text-foreground"
+              }`}
             >
-              <Lightbulb className="h-4 w-4" />
-              {showFramework ? "Hide Framework" : "Answer Framework"}
+              <Lightbulb className="h-3.5 w-3.5" />
+              Framework
             </button>
             <button
               onClick={reset}
-              className="flex items-center gap-2 rounded-md px-3 py-2 text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
+              className="flex items-center gap-2 rounded-sm px-3 py-2 text-xs font-mono font-medium text-muted-foreground transition-colors hover:text-foreground"
             >
-              <RotateCcw className="h-4 w-4" />
+              <RotateCcw className="h-3.5 w-3.5" />
               Reset
             </button>
           </div>
         </div>
 
-        {/* Guidance */}
+        {/* Guidance panel */}
         {showGuidance && (
           <div className="border-t border-border px-6 py-4">
-            <div className="rounded-md bg-primary/5 border border-primary/10 px-4 py-3">
-              <p className="text-xs font-semibold tracking-wide text-primary uppercase mb-2">
+            <div className="flex flex-col gap-2">
+              <span className="text-xs font-mono font-semibold tracking-widest text-muted-foreground uppercase">
                 Guidance Notes
-              </p>
+              </span>
               <p className="text-sm leading-relaxed text-foreground">
                 {current.guidanceNotes}
               </p>
@@ -168,13 +169,13 @@ export function MockQuestions() {
           </div>
         )}
 
-        {/* Framework */}
+        {/* Framework panel */}
         {showFramework && (
           <div className="border-t border-border px-6 py-4">
-            <div className="rounded-md bg-secondary px-4 py-3">
-              <p className="text-xs font-semibold tracking-wide text-muted-foreground uppercase mb-2">
-                Sample Answer Framework
-              </p>
+            <div className="flex flex-col gap-2">
+              <span className="text-xs font-mono font-semibold tracking-widest text-muted-foreground uppercase">
+                Answer Framework
+              </span>
               <p className="text-sm leading-relaxed text-foreground">
                 {current.sampleFramework}
               </p>
@@ -183,12 +184,14 @@ export function MockQuestions() {
         )}
       </div>
 
-      {/* All questions list */}
-      <div className="flex flex-col gap-2">
-        <h3 className="text-sm font-medium text-muted-foreground">
-          All Questions
-        </h3>
-        <div className="flex flex-col gap-1">
+      {/* Question list */}
+      <div className="flex flex-col gap-0">
+        <div className="px-4 py-2">
+          <span className="text-xs font-mono font-semibold tracking-widest text-muted-foreground uppercase">
+            All Questions
+          </span>
+        </div>
+        <div className="border border-border rounded-sm overflow-hidden">
           {filteredQuestions.map((q, i) => {
             const qCatInfo =
               CATEGORIES[q.category as keyof typeof CATEGORIES]
@@ -200,18 +203,19 @@ export function MockQuestions() {
                   setShowGuidance(false)
                   setShowFramework(false)
                 }}
-                className={`flex items-center gap-3 rounded-md px-3 py-2 text-left text-sm transition-colors ${
+                className={`flex w-full items-center gap-4 border-b border-border last:border-b-0 px-4 py-3 text-left text-sm transition-colors ${
                   i === currentIndex
                     ? "bg-secondary text-foreground"
-                    : "text-muted-foreground hover:text-foreground"
+                    : "text-muted-foreground hover:text-foreground hover:bg-secondary/50"
                 }`}
               >
-                <span
-                  className={`flex-shrink-0 text-xs font-medium ${qCatInfo.color}`}
-                >
+                <span className="w-6 text-right text-xs font-mono tabular-nums flex-shrink-0">
+                  {String(i + 1).padStart(2, "0")}
+                </span>
+                <span className="flex-shrink-0 text-xs font-mono font-semibold tracking-widest uppercase w-20">
                   {qCatInfo.label}
                 </span>
-                <span className="truncate">{q.question}</span>
+                <span className="truncate font-mono text-sm">{q.question}</span>
               </button>
             )
           })}

@@ -506,10 +506,10 @@ export const MOCK_QUESTIONS: MockQuestion[] = [
 ]
 
 export const CATEGORIES = {
-  vercel: { label: "Vercel Knowledge", color: "text-primary" },
-  technical: { label: "Next.js & React", color: "text-chart-2" },
-  sales: { label: "Sales & Startups", color: "text-warning" },
-  narrative: { label: "Your Story", color: "text-chart-5" },
-  hr: { label: "HR Screen", color: "text-primary" },
-  behavioral: { label: "Behavioral", color: "text-chart-2" },
+  vercel: { label: "Vercel" },
+  technical: { label: "Technical" },
+  sales: { label: "Sales" },
+  narrative: { label: "Narrative" },
+  hr: { label: "HR" },
+  behavioral: { label: "Behavioral" },
 } as const
