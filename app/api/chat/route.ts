@@ -2,6 +2,7 @@ import {
   convertToModelMessages,
   streamText,
   UIMessage,
+  tool
 } from "ai"
 
 export const maxDuration = 30
