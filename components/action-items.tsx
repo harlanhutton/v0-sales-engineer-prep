@@ -71,20 +71,23 @@ interface ActionItemsProps {
   ) => Promise<void>
   onDelete: (id: string) => Promise<void>
   onReorder: (reorderedItems: ActionItemWithStatus[], category: string) => Promise<void>
+  onItemClick?: (item: ActionItemWithStatus) => void
 }
 
 const CATEGORY_ORDER = ["vercel", "technical", "sales", "narrative"] as const
 
-function PriorityIndicator({ priority }: { priority: ActionItem["priority"] }) {
-  const styles = {
-    high: "bg-foreground",
-    medium: "bg-muted-foreground",
-    low: "bg-border",
-  }
+const DUE_CONTEXT_COLORS: Record<string, string> = {
+  "Before HR screen": "bg-emerald-500",
+  "Before technical rounds": "bg-sky-500",
+  "Before later rounds": "bg-amber-500",
+}
+
+function DueContextDot({ dueContext }: { dueContext?: string }) {
+  const color = (dueContext && DUE_CONTEXT_COLORS[dueContext]) || "bg-muted-foreground"
   return (
     <span
-      className={`inline-block h-1.5 w-1.5 rounded-full ${styles[priority]}`}
-      title={`${priority} priority`}
+      className={`inline-block h-1.5 w-1.5 rounded-full flex-shrink-0 ${color}`}
+      title={dueContext || ""}
     />
   )
 }
@@ -96,6 +99,7 @@ function SortableActionItemRow({
   onToggle,
   onEdit,
   onDelete,
+  onItemClick,
 }: {
   item: ActionItemWithStatus
   index: number
@@ -103,6 +107,7 @@ function SortableActionItemRow({
   onToggle: () => void
   onEdit: () => void
   onDelete: () => void
+  onItemClick?: () => void
 }) {
   const [isExpanded, setIsExpanded] = useState(false)
 
@@ -161,25 +166,28 @@ function SortableActionItemRow({
 
         {/* Content */}
         <div className="flex flex-1 items-center gap-3 min-w-0">
-          <span
-            className={`text-sm font-medium font-mono leading-snug truncate ${
+          <button
+            onClick={onItemClick}
+            className={`text-sm font-medium font-mono leading-snug truncate text-left hover:underline underline-offset-2 ${
               isCompleted
                 ? "line-through text-muted-foreground"
                 : "text-foreground"
             }`}
           >
             {item.title}
-          </span>
+          </button>
         </div>
 
         {/* Meta */}
         <div className="flex items-center gap-3 flex-shrink-0">
-          <PriorityIndicator priority={item.priority} />
-          {item.dueContext && (
-            <span className="text-xs font-mono text-muted-foreground hidden sm:inline">
-              {item.dueContext}
-            </span>
-          )}
+  {item.dueContext && (
+  <span className="flex items-center gap-1.5 hidden sm:inline-flex">
+    <DueContextDot dueContext={item.dueContext} />
+    <span className="text-xs font-mono text-muted-foreground">
+      {item.dueContext}
+    </span>
+  </span>
+  )}
 
           {/* Actions menu */}
           <DropdownMenu>
@@ -239,6 +247,7 @@ function SortableCategoryGroup({
   onEdit,
   onDelete,
   onReorder,
+  onItemClick,
   globalStartIndex,
 }: {
   category: string
@@ -248,6 +257,7 @@ function SortableCategoryGroup({
   onEdit: (item: ActionItemWithStatus) => void
   onDelete: (id: string) => void
   onReorder: (reorderedItems: ActionItemWithStatus[], category: string) => Promise<void>
+  onItemClick?: (item: ActionItemWithStatus) => void
   globalStartIndex: number
 }) {
   const catKey = category as keyof typeof CATEGORIES
@@ -308,6 +318,7 @@ function SortableCategoryGroup({
                 onToggle={() => onToggle(item.id)}
                 onEdit={() => onEdit(item)}
                 onDelete={() => onDelete(item.id)}
+                onItemClick={onItemClick ? () => onItemClick(item) : undefined}
               />
             ))}
           </div>
@@ -494,6 +505,7 @@ export function ActionItems({
   onUpdate,
   onDelete,
   onReorder,
+  onItemClick,
 }: ActionItemsProps) {
   const [filter, setFilter] = useState<string>("all")
   const [addDialogOpen, setAddDialogOpen] = useState(false)
@@ -581,6 +593,7 @@ export function ActionItems({
           onEdit={setEditingItem}
           onDelete={(id) => setDeletingItemId(id)}
           onReorder={onReorder}
+          onItemClick={onItemClick}
           globalStartIndex={categoryStartIndices[category] ?? 0}
         />
       ))}

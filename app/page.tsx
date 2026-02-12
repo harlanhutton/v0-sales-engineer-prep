@@ -3,12 +3,14 @@
 import { useState } from "react"
 import { PrepHeader } from "@/components/prep-header"
 import { ActionItems } from "@/components/action-items"
+import { ActionItemDetail } from "@/components/action-item-detail"
 import { KnowledgeBase } from "@/components/knowledge-base"
 import { MockQuestions } from "@/components/mock-questions"
-import { useActionItems } from "@/hooks/use-action-items"
+import { useActionItems, type ActionItemWithStatus } from "@/hooks/use-action-items"
 
 export default function Home() {
   const [activeTab, setActiveTab] = useState("checklist")
+  const [selectedItem, setSelectedItem] = useState<ActionItemWithStatus | null>(null)
   const {
     items,
     completedIds,
@@ -19,6 +21,32 @@ export default function Home() {
     deleteItem,
     reorderItems,
   } = useActionItems()
+
+  // Keep selectedItem in sync with latest data
+  const currentItem = selectedItem
+    ? items.find((i) => i.id === selectedItem.id) ?? selectedItem
+    : null
+
+  function handleItemClick(item: ActionItemWithStatus) {
+    setSelectedItem(item)
+  }
+
+  function handleBack() {
+    setSelectedItem(null)
+  }
+
+  // If viewing a detail page, show it instead of the tab content
+  if (currentItem) {
+    return (
+      <div className="min-h-screen bg-background">
+        <ActionItemDetail
+          item={currentItem}
+          onBack={handleBack}
+          onToggle={toggleItem}
+        />
+      </div>
+    )
+  }
 
   return (
     <div className="min-h-screen bg-background">
@@ -39,6 +67,7 @@ export default function Home() {
             onUpdate={updateItem}
             onDelete={deleteItem}
             onReorder={reorderItems}
+            onItemClick={handleItemClick}
           />
         )}
         {activeTab === "knowledge" && <KnowledgeBase />}
