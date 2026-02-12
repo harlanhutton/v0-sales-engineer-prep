@@ -1,8 +1,9 @@
 "use client"
 
+import { useState, useCallback } from "react"
 import useSWR from "swr"
 import { getSupabaseClient } from "@/lib/supabase/client"
-import type { ActionItem } from "@/lib/prep-data"
+import { ACTION_ITEMS, type ActionItem } from "@/lib/prep-data"
 
 interface DbActionItem {
   id: string
@@ -31,15 +32,30 @@ function mapDbToActionItem(row: DbActionItem): ActionItem & { isCompleted: boole
 
 export type ActionItemWithStatus = ActionItem & { isCompleted: boolean; sortOrder: number }
 
+function getStaticFallback(): ActionItemWithStatus[] {
+  return ACTION_ITEMS.map((item, index) => ({
+    ...item,
+    isCompleted: false,
+    sortOrder: index,
+  }))
+}
+
 async function fetchActionItems(): Promise<ActionItemWithStatus[]> {
   const supabase = getSupabaseClient()
+  if (!supabase) return getStaticFallback()
+
   const { data, error } = await supabase
     .from("action_items")
     .select("*")
     .order("sort_order", { ascending: true })
 
-  if (error) throw error
+  if (error) return getStaticFallback()
+  if (!data || data.length === 0) return getStaticFallback()
   return (data as DbActionItem[]).map(mapDbToActionItem)
+}
+
+function isSupabaseAvailable(): boolean {
+  return getSupabaseClient() !== null
 }
 
 export function useActionItems() {
@@ -63,13 +79,14 @@ export function useActionItems() {
     )
 
     const supabase = getSupabaseClient()
+    if (!supabase) return
+
     const { error } = await supabase
       .from("action_items")
       .update({ is_completed: newCompleted })
       .eq("id", id)
 
     if (error) {
-      // Revert on error
       mutate()
     }
   }
@@ -98,6 +115,8 @@ export function useActionItems() {
     mutate([...items, newItem], false)
 
     const supabase = getSupabaseClient()
+    if (!supabase) return
+
     const { error } = await supabase.from("action_items").insert({
       id: newId,
       category: item.category,
@@ -139,6 +158,8 @@ export function useActionItems() {
     if (updates.dueContext !== undefined) dbUpdates.due_context = updates.dueContext
 
     const supabase = getSupabaseClient()
+    if (!supabase) return
+
     const { error } = await supabase
       .from("action_items")
       .update(dbUpdates)
@@ -158,6 +179,8 @@ export function useActionItems() {
     )
 
     const supabase = getSupabaseClient()
+    if (!supabase) return
+
     const { error } = await supabase.from("action_items").delete().eq("id", id)
 
     if (error) {
@@ -178,6 +201,8 @@ export function useActionItems() {
     mutate(updatedItems, false)
 
     const supabase = getSupabaseClient()
+    if (!supabase) return
+
     const updates = categoryItems.map((item, index) => ({
       id: item.id,
       sort_order: item.sortOrder !== undefined ? item.sortOrder : index,
@@ -225,6 +250,8 @@ export function useActionItems() {
     )
 
     const supabase = getSupabaseClient()
+    if (!supabase) return
+
     const { error: err1 } = await supabase
       .from("action_items")
       .update({ sort_order: swapOrder })
