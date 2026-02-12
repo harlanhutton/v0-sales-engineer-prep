@@ -71,6 +71,7 @@ interface ActionItemsProps {
   ) => Promise<void>
   onDelete: (id: string) => Promise<void>
   onReorder: (reorderedItems: ActionItemWithStatus[], category: string) => Promise<void>
+  onItemClick?: (item: ActionItemWithStatus) => void
 }
 
 const CATEGORY_ORDER = ["vercel", "technical", "sales", "narrative"] as const
@@ -96,6 +97,7 @@ function SortableActionItemRow({
   onToggle,
   onEdit,
   onDelete,
+  onItemClick,
 }: {
   item: ActionItemWithStatus
   index: number
@@ -103,6 +105,7 @@ function SortableActionItemRow({
   onToggle: () => void
   onEdit: () => void
   onDelete: () => void
+  onItemClick?: () => void
 }) {
   const [isExpanded, setIsExpanded] = useState(false)
 
@@ -161,15 +164,16 @@ function SortableActionItemRow({
 
         {/* Content */}
         <div className="flex flex-1 items-center gap-3 min-w-0">
-          <span
-            className={`text-sm font-medium font-mono leading-snug truncate ${
+          <button
+            onClick={onItemClick}
+            className={`text-sm font-medium font-mono leading-snug truncate text-left hover:underline underline-offset-2 ${
               isCompleted
                 ? "line-through text-muted-foreground"
                 : "text-foreground"
             }`}
           >
             {item.title}
-          </span>
+          </button>
         </div>
 
         {/* Meta */}
@@ -239,6 +243,7 @@ function SortableCategoryGroup({
   onEdit,
   onDelete,
   onReorder,
+  onItemClick,
   globalStartIndex,
 }: {
   category: string
@@ -248,6 +253,7 @@ function SortableCategoryGroup({
   onEdit: (item: ActionItemWithStatus) => void
   onDelete: (id: string) => void
   onReorder: (reorderedItems: ActionItemWithStatus[], category: string) => Promise<void>
+  onItemClick?: (item: ActionItemWithStatus) => void
   globalStartIndex: number
 }) {
   const catKey = category as keyof typeof CATEGORIES
@@ -308,6 +314,7 @@ function SortableCategoryGroup({
                 onToggle={() => onToggle(item.id)}
                 onEdit={() => onEdit(item)}
                 onDelete={() => onDelete(item.id)}
+                onItemClick={onItemClick ? () => onItemClick(item) : undefined}
               />
             ))}
           </div>
@@ -494,6 +501,7 @@ export function ActionItems({
   onUpdate,
   onDelete,
   onReorder,
+  onItemClick,
 }: ActionItemsProps) {
   const [filter, setFilter] = useState<string>("all")
   const [addDialogOpen, setAddDialogOpen] = useState(false)
@@ -581,6 +589,7 @@ export function ActionItems({
           onEdit={setEditingItem}
           onDelete={(id) => setDeletingItemId(id)}
           onReorder={onReorder}
+          onItemClick={onItemClick}
           globalStartIndex={categoryStartIndices[category] ?? 0}
         />
       ))}
