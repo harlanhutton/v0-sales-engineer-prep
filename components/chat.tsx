@@ -41,8 +41,6 @@ export function Chat() {
 
   const { messages, sendMessage, status, error } = useChat({ transport })
 
-  console.log("[v0] status:", status, "error:", error?.message, "messages:", messages.length)
-
   const isLoading = status === "streaming" || status === "submitted"
 
   useEffect(() => {

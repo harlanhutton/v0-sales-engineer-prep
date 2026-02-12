@@ -24,10 +24,7 @@ const SYSTEM_PROMPTS: Record<string, string> = {
 
 export async function POST(req: Request) {
   // Challenge 1: Destructure mode alongside messages from the request body
-  const body = await req.json()
-  const { messages, mode }: { messages: UIMessage[]; mode?: string } = body
-  console.log("[v0] API route hit - mode:", mode, "messages count:", messages?.length)
-  console.log("[v0] Last message:", JSON.stringify(messages?.[messages.length - 1]))
+  const { messages, mode }: { messages: UIMessage[]; mode?: string } = await req.json()
 
   const result = streamText({
     model: "openai/gpt-4o-mini",
