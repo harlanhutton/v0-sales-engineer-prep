@@ -94,7 +94,7 @@ export function Chat() {
       {/* Error display */}
       {error && (
         <div className="mb-3 rounded-lg border border-destructive/50 bg-destructive/10 px-4 py-2.5 text-sm font-mono text-destructive">
-          Error: {error.message}
+          {error.message || error.cause?.toString() || "Something went wrong. Please try again."}
         </div>
       )}
 
