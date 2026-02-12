@@ -21,12 +21,15 @@ export function Chat() {
   const [mode, setMode] = useState("interview-prep")
 
   // Stabilize transport so it doesn't re-create on every render
-  const transport = useMemo(() => new DefaultChatTransport({ api: "/api/chat" }), [])
+  const transport = useMemo(
+    () =>
+      new DefaultChatTransport({
+        api: "/api/chat",
+      }),
+    []
+  )
 
   const { messages, sendMessage, status } = useChat({ transport })
-
-  console.log("[v0] messages:", messages.length, "status:", status)
-  console.log("[v0] last message:", messages.length > 0 ? JSON.stringify(messages[messages.length - 1]) : "none")
 
   const isLoading = status === "streaming" || status === "submitted"
 
@@ -96,6 +99,28 @@ export function Chat() {
 
         {messages.map((message) => {
           const isUser = message.role === "user"
+          const textContent = message.parts
+            ?.filter((part): part is { type: "text"; text: string } => part.type === "text")
+            .map((part) => part.text)
+            .join("") || ""
+          const hasContent = textContent.length > 0
+
+          // Skip rendering assistant messages with no content yet (still loading)
+          if (!isUser && !hasContent && isLoading) {
+            return (
+              <div key={message.id} className="flex gap-3">
+                <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full border border-border bg-secondary mt-0.5">
+                  <Bot className="h-3.5 w-3.5 text-muted-foreground" />
+                </div>
+                <div className="bg-secondary border border-border rounded-lg px-4 py-2.5">
+                  <Loader2 className="h-4 w-4 animate-spin text-muted-foreground" />
+                </div>
+              </div>
+            )
+          }
+
+          if (!isUser && !hasContent) return null
+
           return (
             <div
               key={message.id}
@@ -112,16 +137,7 @@ export function Chat() {
                   : "bg-secondary text-foreground border border-border"
                   }`}
               >
-                {message.parts.map((part, index) => {
-                  if (part.type === "text") {
-                    return (
-                      <span key={index} className="whitespace-pre-wrap">
-                        {part.text}
-                      </span>
-                    )
-                  }
-                  return null
-                })}
+                <span className="whitespace-pre-wrap">{textContent}</span>
               </div>
               {isUser && (
                 <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full border border-border bg-foreground mt-0.5">
@@ -131,17 +147,6 @@ export function Chat() {
             </div>
           )
         })}
-
-        {isLoading && messages[messages.length - 1]?.role === "user" && (
-          <div className="flex gap-3">
-            <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full border border-border bg-secondary mt-0.5">
-              <Bot className="h-3.5 w-3.5 text-muted-foreground" />
-            </div>
-            <div className="bg-secondary border border-border rounded-lg px-4 py-2.5">
-              <Loader2 className="h-4 w-4 animate-spin text-muted-foreground" />
-            </div>
-          </div>
-        )}
 
         <div ref={messagesEndRef} />
       </div>
