@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useRef, useEffect } from "react"
+import { useState, useRef, useEffect, SetStateAction } from "react"
 import { useChat } from "@ai-sdk/react"
 import { DefaultChatTransport } from "ai"
 import { Send, Bot, User, Loader2 } from "lucide-react"
@@ -11,20 +11,6 @@ export function Chat() {
   const textareaRef = useRef<HTMLTextAreaElement>(null)
   const mode = useState("Interview Prep")
 
-  const handleChange = (mode: { target: { value: any } }) => {
-    setSelectedMode(mode.target.value);
-  };
-
-  return (
-    <label>
-      Pick a fruit:
-      <select value={selectedFruit} onChange={handleChange}>
-        <option value="apple">Apple</option>
-        <option value="banana">Banana</option>
-        <option value="orange">Orange</option>
-      </select>
-    </label>
-  );
 
   const { messages, sendMessage, status } = useChat({
     transport: new DefaultChatTransport({ api: "/api/chat" }),
@@ -42,6 +28,25 @@ export function Chat() {
       textareaRef.current.style.height = `${Math.min(textareaRef.current.scrollHeight, 160)}px`
     }
   }, [input])
+
+  function setMode() {
+    const [selectedMode, setSelectedMode] = useState('Interview Prep'); // State to manage the selected value
+
+    const handleChange = (event: { target: { value: SetStateAction<string> } }) => {
+      setSelectedMode(event.target.value);
+    };
+
+    return (
+      <label>
+        Pick a mode:
+        <select value={selectedMode} onChange={handleChange}>
+          <option value="interviewprep">Interview Prep</option>
+          <option value="codereview">CodeReview</option>
+          <option value="likeim5">Explain Like I'm 5</option>
+        </select>
+      </label>
+    );
+  }
 
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
