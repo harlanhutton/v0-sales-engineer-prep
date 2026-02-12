@@ -25,16 +25,40 @@ const SYSTEM_PROMPTS: Record<string, string> = {
     "Use analogies, everyday examples, and avoid jargon. Make it fun and memorable.",
 }
 
-export const addActionItem = tool({
-  description: 'A tool to add an action item to the user prep checklist when requested.',
+// Challenge 2: Define a tool the AI can call to add action items
+const addActionItem = tool({
+  description: "Add an action item to the user's SE interview prep checklist. Use this when the user asks to create a task, reminder, or action item.",
   inputSchema: z.object({
-    title: z.string(),
-    description: z.string(),
-    category: z.enum(["vercel", "technical", "sales", "narrative"]),
-    priority: z.enum(["high", "medium", "low"])
+    title: z.string().describe("Short title for the action item"),
+    description: z.string().describe("Detailed description of what needs to be done"),
+    category: z.enum(["vercel", "technical", "sales", "narrative"]).describe("Category of the action item"),
+    priority: z.enum(["high", "medium", "low"]).describe("Priority level"),
   }),
-  execute: async ({ }) => {
-    const supabase = getSupabaseClient();
+  // Challenge 2: The execute function receives the validated args and runs your logic
+  execute: async ({ title, description, category, priority }) => {
+    const supabase = getSupabaseClient()
+    if (!supabase) {
+      return { success: false, error: "Database not available" }
+    }
+
+    const id = `${category[0]}${Date.now()}`
+    const { error } = await supabase.from("action_items").insert({
+      id,
+      category,
+      title,
+      description,
+      priority,
+      due_context: null,
+      is_completed: false,
+      sort_order: Date.now(), // puts it at the end
+    })
+
+    if (error) {
+      return { success: false, error: error.message }
+    }
+
+    // The return value is what the AI "sees" as the tool result
+    return { success: true, id, title, category, priority }
   },
 });
 

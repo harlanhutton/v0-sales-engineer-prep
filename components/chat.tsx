@@ -3,7 +3,7 @@
 import { useState, useRef, useEffect, useMemo } from "react"
 import { useChat } from "@ai-sdk/react"
 import { DefaultChatTransport } from "ai"
-import { Send, Bot, User, Loader2 } from "lucide-react"
+import { Send, Bot, User, Loader2, CheckCircle2, AlertCircle, ListPlus } from "lucide-react"
 
 // Challenge 1: The three modes and their labels
 const MODES = [
@@ -120,7 +120,9 @@ export function Chat() {
             ?.filter((part): part is { type: "text"; text: string } => part.type === "text")
             .map((part) => part.text)
             .join("") || ""
-          const hasContent = textContent.length > 0
+          // Challenge 2: Check for tool invocation parts
+          const toolParts = message.parts?.filter((part) => part.type === "tool-invocation") || []
+          const hasContent = textContent.length > 0 || toolParts.length > 0
 
           // Skip rendering assistant messages with no content yet (still loading)
           if (!isUser && !hasContent && isLoading) {
@@ -154,7 +156,38 @@ export function Chat() {
                   : "bg-secondary text-foreground border border-border"
                   }`}
               >
-                <span className="whitespace-pre-wrap">{textContent}</span>
+                {textContent && <span className="whitespace-pre-wrap">{textContent}</span>}
+                {/* Challenge 2: Render tool invocation results */}
+                {toolParts.map((part: any, i: number) => {
+                  const invocation = part.toolInvocation
+                  if (invocation.toolName === "addActionItem") {
+                    if (invocation.state === "output-available") {
+                      const result = invocation.output
+                      return (
+                        <div key={i} className="flex items-center gap-2 rounded-md bg-success/10 border border-success/20 px-3 py-2 mt-1">
+                          {result.success ? (
+                            <>
+                              <CheckCircle2 className="h-4 w-4 text-success shrink-0" />
+                              <span className="text-success text-xs">Added: {result.title} ({result.category}, {result.priority})</span>
+                            </>
+                          ) : (
+                            <>
+                              <AlertCircle className="h-4 w-4 text-destructive shrink-0" />
+                              <span className="text-destructive text-xs">Failed: {result.error}</span>
+                            </>
+                          )}
+                        </div>
+                      )
+                    }
+                    return (
+                      <div key={i} className="flex items-center gap-2 rounded-md bg-secondary border border-border px-3 py-2 mt-1">
+                        <ListPlus className="h-4 w-4 text-muted-foreground animate-pulse shrink-0" />
+                        <span className="text-muted-foreground text-xs">Adding action item...</span>
+                      </div>
+                    )
+                  }
+                  return null
+                })}
               </div>
               {isUser && (
                 <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full border border-border bg-foreground mt-0.5">
