@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useRef, useEffect } from "react"
+import { useState, useRef, useEffect, useMemo } from "react"
 import { useChat } from "@ai-sdk/react"
 import { DefaultChatTransport } from "ai"
 import { Send, Bot, User, Loader2 } from "lucide-react"
@@ -20,9 +20,13 @@ export function Chat() {
   // Challenge 1: useState returns [value, setter] - destructure both!
   const [mode, setMode] = useState("interview-prep")
 
-  const { messages, sendMessage, status } = useChat({
-    transport: new DefaultChatTransport({ api: "/api/chat" }),
-  })
+  // Stabilize transport so it doesn't re-create on every render
+  const transport = useMemo(() => new DefaultChatTransport({ api: "/api/chat" }), [])
+
+  const { messages, sendMessage, status } = useChat({ transport })
+
+  console.log("[v0] messages:", messages.length, "status:", status)
+  console.log("[v0] last message:", messages.length > 0 ? JSON.stringify(messages[messages.length - 1]) : "none")
 
   const isLoading = status === "streaming" || status === "submitted"
 
