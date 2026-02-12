@@ -37,14 +37,23 @@ const addActionItem = tool({
   }),
   // Challenge 2: The execute function receives the validated args and runs your logic
   execute: async ({ title, description, category, priority }) => {
-    console.log("[v0] Tool called - addActionItem:", { title, category, priority })
     const supabase = createServerSupabaseClient()
     if (!supabase) {
-      console.error("[v0] Supabase client creation failed")
       return { success: false, error: "Database not available" }
     }
 
+    // First, get the current max sort_order so we can append at the end
+    // (sort_order is an integer column, so Date.now() would overflow it)
+    const { data: maxRow } = await supabase
+      .from("action_items")
+      .select("sort_order")
+      .order("sort_order", { ascending: false })
+      .limit(1)
+      .single()
+
+    const nextOrder = (maxRow?.sort_order ?? -1) + 1
     const id = `${category[0]}${Date.now()}`
+
     const { error } = await supabase.from("action_items").insert({
       id,
       category,
@@ -53,16 +62,13 @@ const addActionItem = tool({
       priority,
       due_context: null,
       is_completed: false,
-      sort_order: Date.now(), // puts it at the end
+      sort_order: nextOrder,
     })
 
     if (error) {
-      console.error("[v0] Supabase insert error:", error.message)
       return { success: false, error: error.message }
     }
 
-    console.log("[v0] Action item inserted successfully:", id)
-    // The return value is what the AI "sees" as the tool result
     return { success: true, id, title, category, priority }
   },
 });
