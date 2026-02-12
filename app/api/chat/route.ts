@@ -26,7 +26,7 @@ const SYSTEM_PROMPTS: Record<string, string> = {
 
 
 export const addActionItem = tool({
-  description: 'A tool to add an action item',
+  description: 'A tool to add an action item to the user prep checklist when requested.',
   inputSchema: z.object({
     query: z.string(),
   }),
