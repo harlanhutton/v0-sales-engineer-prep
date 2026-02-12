@@ -51,7 +51,7 @@ export function Chat() {
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
     if (!input.trim() || isLoading) return
-    sendMessage({ text: input }, { body: { mode: selectedMode } })
+    sendMessage({ text: input }, { body: { mode: setMode } })
     setInput("")
   }
 
