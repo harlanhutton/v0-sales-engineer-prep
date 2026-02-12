@@ -9,6 +9,7 @@ export function Chat() {
   const [input, setInput] = useState("")
   const messagesEndRef = useRef<HTMLDivElement>(null)
   const textareaRef = useRef<HTMLTextAreaElement>(null)
+  const mode = useState("Interview Prep")
 
   const { messages, sendMessage, status } = useChat({
     transport: new DefaultChatTransport({ api: "/api/chat" }),
@@ -30,7 +31,7 @@ export function Chat() {
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
     if (!input.trim() || isLoading) return
-    sendMessage({ text: input })
+    sendMessage({ text: input }, { body: { mode: selectedMode } })
     setInput("")
   }
 
@@ -72,11 +73,10 @@ export function Chat() {
                 </div>
               )}
               <div
-                className={`max-w-[80%] rounded-lg px-4 py-2.5 text-sm font-mono leading-relaxed ${
-                  isUser
+                className={`max-w-[80%] rounded-lg px-4 py-2.5 text-sm font-mono leading-relaxed ${isUser
                     ? "bg-foreground text-background"
                     : "bg-secondary text-foreground border border-border"
-                }`}
+                  }`}
               >
                 {message.parts.map((part, index) => {
                   if (part.type === "text") {
