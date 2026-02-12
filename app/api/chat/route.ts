@@ -4,6 +4,7 @@ import {
   UIMessage,
   tool
 } from "ai"
+import { z } from "zod"
 
 export const maxDuration = 30
 
