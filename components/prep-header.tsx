@@ -51,19 +51,19 @@ export function PrepHeader({
           {/* Title block */}
           <div className="flex items-end justify-between">
             <div className="flex flex-col gap-3">
-              <pre className="font-mono text-[10px] leading-none text-muted-foreground select-none hidden sm:block" aria-hidden="true">
-{`██╗   ██╗███████╗██████╗  ██████╗███████╗██╗     
-██║   ██║██╔════╝██╔══██╗██╔════╝██╔════╝██║     
-██║   ██║█████╗  ██████╔╝██║     █████╗  ██║     
-╚██╗ ██╔╝██╔══╝  ██╔══██╗██║     ██╔══╝  ██║     
- ╚████╔╝ ███████╗██║  ██║╚██████╗███████╗███████╗
-  ╚═══╝  ╚══════╝╚═╝  ╚═╝ ╚═════╝╚══════╝╚══════╝`}
-              </pre>
+              <div className="flex items-center gap-3 text-muted-foreground">
+                <svg width="28" height="24" viewBox="0 0 76 65" fill="currentColor" aria-hidden="true">
+                  <path d="M37.5274 0L75.0548 65H0L37.5274 0Z" />
+                </svg>
+                <span className="text-xs font-mono tracking-widest uppercase">Vercel</span>
+              </div>
               <h1 className="text-4xl font-bold tracking-tighter text-foreground font-mono sm:text-5xl">
-                {"Harlan Hutton's"} Interview Prep
+                {"Harlan Hutton's"}
+                <br />
+                <span className="text-muted-foreground">Interview Prep</span>
               </h1>
               <p className="text-sm text-muted-foreground font-mono">
-                Sales Engineer, Startups @ Vercel
+                Sales Engineer, Startups
               </p>
             </div>
             <div className="flex flex-col items-end gap-1">
