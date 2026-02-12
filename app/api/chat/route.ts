@@ -24,6 +24,18 @@ const SYSTEM_PROMPTS: Record<string, string> = {
     "Use analogies, everyday examples, and avoid jargon. Make it fun and memorable.",
 }
 
+
+export const addActionItem = tool({
+  description: 'A tool to add an action item',
+  inputSchema: z.object({
+    query: z.string(),
+  }),
+  execute: async ({ query }) => {
+    // your tool logic
+    return result;
+  },
+});
+
 export async function POST(req: Request) {
   const { messages, mode }: { messages: UIMessage[]; mode?: string } = await req.json()
 
