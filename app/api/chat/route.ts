@@ -31,7 +31,7 @@ export const addActionItem = tool({
     title: z.string(),
     description: z.string(),
     category: z.enum(),
-    priority: z.enum("high", "medium", "low")
+    priority: z.enum(["high", "medium", "low"])
   }),
   execute: async ({ query }) => {
     // your tool logic
