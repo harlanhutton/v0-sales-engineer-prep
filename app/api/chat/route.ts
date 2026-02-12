@@ -24,12 +24,6 @@ const SYSTEM_PROMPTS: Record<string, string> = {
     "You explain complex technical concepts in the simplest possible terms, as if explaining to a 5-year-old. " +
     "Use analogies, everyday examples, and avoid jargon. Make it fun and memorable.",
 }
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
-const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
-
-if (supabaseUrl && supabaseAnonKey) {
-  const supabase = createClient(supabaseUrl, supabaseAnonKey);
-}
 
 export const addActionItem = tool({
   description: 'A tool to add an action item to the user prep checklist when requested.',
@@ -40,7 +34,7 @@ export const addActionItem = tool({
     priority: z.enum(["high", "medium", "low"])
   }),
   execute: async ({ }) => {
-    const supabase = getSupabaseClient()
+    const supabase = getSupabaseClient();
   },
 });
 
