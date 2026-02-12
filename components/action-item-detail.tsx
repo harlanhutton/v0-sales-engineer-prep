@@ -52,7 +52,7 @@ export function ActionItemDetail({ item, onBack, onToggle }: ActionItemDetailPro
             onClick={() => onToggle(item.id)}
             className={`mt-1 shrink-0 flex h-5 w-5 items-center justify-center rounded border font-mono text-xs transition-colors ${
               item.isCompleted
-                ? "border-foreground bg-foreground text-background"
+                ? "border-success bg-success text-success-foreground"
                 : "border-muted-foreground/40 hover:border-foreground"
             }`}
             aria-label={item.isCompleted ? "Mark as incomplete" : "Mark as complete"}
@@ -62,7 +62,7 @@ export function ActionItemDetail({ item, onBack, onToggle }: ActionItemDetailPro
           <div className="flex-1">
             <h1
               className={`text-2xl font-bold font-mono tracking-tight ${
-                item.isCompleted ? "line-through text-muted-foreground" : "text-foreground"
+                item.isCompleted ? "text-success" : "text-foreground"
               }`}
             >
               {item.title}
