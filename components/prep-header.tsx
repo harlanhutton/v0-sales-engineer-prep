@@ -11,6 +11,7 @@ const TABS = [
   { id: "checklist", label: "Action Items" },
   { id: "knowledge", label: "Knowledge Base" },
   { id: "practice", label: "Mock Q&A" },
+  { id: "chat", label: "AI Chat" },
 ]
 
 export function PrepHeader({
