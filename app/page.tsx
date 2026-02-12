@@ -17,7 +17,7 @@ export default function Home() {
     addItem,
     updateItem,
     deleteItem,
-    moveItem,
+    reorderItems,
   } = useActionItems()
 
   return (
@@ -38,7 +38,7 @@ export default function Home() {
             onAdd={addItem}
             onUpdate={updateItem}
             onDelete={deleteItem}
-            onMove={moveItem}
+            onReorder={reorderItems}
           />
         )}
         {activeTab === "knowledge" && <KnowledgeBase />}
