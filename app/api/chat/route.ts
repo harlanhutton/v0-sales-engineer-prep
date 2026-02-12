@@ -25,7 +25,7 @@ const SYSTEM_PROMPTS: Record<string, string> = {
     "Use analogies, everyday examples, and avoid jargon. Make it fun and memorable.",
 }
 
-const supabase = createClient(process.env.NEXT_PUBLIC_SUPABASE_URL, import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY);
+const supabase = createClient(process.env.NEXT_PUBLIC_SUPABASE_URL, process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY);
 
 
 export const addActionItem = tool({
