@@ -34,9 +34,10 @@ const addActionItem = tool({
     description: z.string().describe("Detailed description of what needs to be done"),
     category: z.enum(["vercel", "technical", "sales", "narrative"]).describe("Category of the action item"),
     priority: z.enum(["high", "medium", "low"]).describe("Priority level"),
+    dueContext: z.enum(["Before HR screen", "Before technical rounds", "Before later rounds"]).describe("When this item should be completed relative to the interview process"),
   }),
   // Challenge 2: The execute function receives the validated args and runs your logic
-  execute: async ({ title, description, category, priority }) => {
+  execute: async ({ title, description, category, priority, dueContext }) => {
     const supabase = createServerSupabaseClient()
     if (!supabase) {
       return { success: false, error: "Database not available" }
@@ -60,7 +61,7 @@ const addActionItem = tool({
       title,
       description,
       priority,
-      due_context: null,
+      due_context: dueContext,
       is_completed: false,
       sort_order: nextOrder,
     })
@@ -69,7 +70,7 @@ const addActionItem = tool({
       return { success: false, error: error.message }
     }
 
-    return { success: true, id, title, category, priority }
+    return { success: true, id, title, category, priority, dueContext }
   },
 });
 

@@ -168,7 +168,7 @@ export function Chat() {
                           {result.success ? (
                             <>
                               <CheckCircle2 className="h-4 w-4 text-success shrink-0" />
-                              <span className="text-success text-xs">Added: {result.title} ({result.category}, {result.priority})</span>
+                              <span className="text-success text-xs">Added: {result.title} ({result.category}, {result.priority}{result.dueContext ? ` - ${result.dueContext}` : ""})</span>
                             </>
                           ) : (
                             <>
