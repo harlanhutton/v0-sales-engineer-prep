@@ -19,17 +19,29 @@ export function Chat() {
 
   // Challenge 1: useState returns [value, setter] - destructure both!
   const [mode, setMode] = useState("interview-prep")
+  const modeRef = useRef(mode)
+  modeRef.current = mode
 
   // Stabilize transport so it doesn't re-create on every render
+  // Use prepareSendMessagesRequest to inject `mode` into every request body
   const transport = useMemo(
     () =>
       new DefaultChatTransport({
         api: "/api/chat",
+        prepareSendMessagesRequest: ({ id, messages }) => ({
+          body: {
+            id,
+            messages,
+            mode: modeRef.current,
+          },
+        }),
       }),
     []
   )
 
-  const { messages, sendMessage, status } = useChat({ transport })
+  const { messages, sendMessage, status, error } = useChat({ transport })
+
+  console.log("[v0] status:", status, "error:", error?.message, "messages:", messages.length)
 
   const isLoading = status === "streaming" || status === "submitted"
 
@@ -47,8 +59,8 @@ export function Chat() {
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
     if (!input.trim() || isLoading) return
-    // Challenge 1: Pass the current mode *value* (not the setter function) in the body
-    sendMessage({ text: input }, { body: { mode } })
+    // Challenge 1: mode is injected via prepareSendMessagesRequest in the transport
+    sendMessage({ text: input })
     setInput("")
   }
 
@@ -80,6 +92,13 @@ export function Chat() {
           ))}
         </div>
       </div>
+
+      {/* Error display */}
+      {error && (
+        <div className="mb-3 rounded-lg border border-destructive/50 bg-destructive/10 px-4 py-2.5 text-sm font-mono text-destructive">
+          Error: {error.message}
+        </div>
+      )}
 
       {/* Messages area */}
       <div className="flex-1 overflow-y-auto space-y-4 pb-4">
