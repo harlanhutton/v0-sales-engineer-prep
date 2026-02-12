@@ -76,16 +76,18 @@ interface ActionItemsProps {
 
 const CATEGORY_ORDER = ["vercel", "technical", "sales", "narrative"] as const
 
-function PriorityIndicator({ priority }: { priority: ActionItem["priority"] }) {
-  const styles = {
-    high: "bg-foreground",
-    medium: "bg-muted-foreground",
-    low: "bg-border",
-  }
+const DUE_CONTEXT_COLORS: Record<string, string> = {
+  "Before HR screen": "bg-emerald-500",
+  "Before technical rounds": "bg-sky-500",
+  "Before later rounds": "bg-amber-500",
+}
+
+function DueContextDot({ dueContext }: { dueContext?: string }) {
+  const color = (dueContext && DUE_CONTEXT_COLORS[dueContext]) || "bg-muted-foreground"
   return (
     <span
-      className={`inline-block h-1.5 w-1.5 rounded-full ${styles[priority]}`}
-      title={`${priority} priority`}
+      className={`inline-block h-1.5 w-1.5 rounded-full flex-shrink-0 ${color}`}
+      title={dueContext || ""}
     />
   )
 }
@@ -178,12 +180,14 @@ function SortableActionItemRow({
 
         {/* Meta */}
         <div className="flex items-center gap-3 flex-shrink-0">
-          <PriorityIndicator priority={item.priority} />
-          {item.dueContext && (
-            <span className="text-xs font-mono text-muted-foreground hidden sm:inline">
-              {item.dueContext}
-            </span>
-          )}
+  {item.dueContext && (
+  <span className="flex items-center gap-1.5 hidden sm:inline-flex">
+    <DueContextDot dueContext={item.dueContext} />
+    <span className="text-xs font-mono text-muted-foreground">
+      {item.dueContext}
+    </span>
+  </span>
+  )}
 
           {/* Actions menu */}
           <DropdownMenu>
