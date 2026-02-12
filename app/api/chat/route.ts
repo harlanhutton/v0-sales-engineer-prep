@@ -24,8 +24,12 @@ const SYSTEM_PROMPTS: Record<string, string> = {
     "You explain complex technical concepts in the simplest possible terms, as if explaining to a 5-year-old. " +
     "Use analogies, everyday examples, and avoid jargon. Make it fun and memorable.",
 }
+const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
 
-const supabase = createClient(process.env.NEXT_PUBLIC_SUPABASE_URL, process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY);
+if (supabaseUrl && supabaseAnonKey) {
+  const supabase = createClient(process.env.NEXT_PUBLIC_SUPABASE_URL, process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY);
+}
 
 
 export const addActionItem = tool({
