@@ -40,6 +40,10 @@ jobs:
 
       - name: Build
         run: pnpm build
+        env:
+          GITHUB_PAGES: "true"
+          NEXT_PUBLIC_SUPABASE_URL: "https://vvlxvdeutxardkyspzwm.supabase.co"
+          NEXT_PUBLIC_SUPABASE_ANON_KEY: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZ2bHh2ZGV1dHhhcmRreXNwendtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzA5MTE0MjUsImV4cCI6MjA4NjQ4NzQyNX0.j_8qgGagAugEIEqHXELalnbeStJz6KHoBbjYZvYDAZU"
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
