@@ -25,9 +25,6 @@ const SYSTEM_PROMPTS: Record<string, string> = {
 export async function POST(req: Request) {
   const { messages, mode }: { messages: UIMessage[]; mode?: string } = await req.json()
 
-  console.log("[v0] Chat API called - mode:", mode, "messages:", messages?.length)
-  console.log("[v0] AI_GATEWAY_API_KEY exists:", !!process.env.AI_GATEWAY_API_KEY)
-
   const result = streamText({
     model: "openai/gpt-4o-mini",
     system: SYSTEM_PROMPTS[mode ?? "interview-prep"] ?? SYSTEM_PROMPTS["interview-prep"],
