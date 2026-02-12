@@ -40,9 +40,7 @@ export const addActionItem = tool({
     priority: z.enum(["high", "medium", "low"])
   }),
   execute: async ({ }) => {
-    supabase
-
-    return result;
+    const supabase = getSupabaseClient()
   },
 });
 
