@@ -1,7 +1,24 @@
 "use client"
 
-import { Check, ChevronDown, ChevronUp, MoreHorizontal, Plus, ArrowUp, ArrowDown, Pencil, Trash2, Loader2 } from "lucide-react"
+import { Check, ChevronDown, ChevronUp, MoreHorizontal, Plus, GripVertical, Pencil, Trash2, Loader2 } from "lucide-react"
 import { useState } from "react"
+import {
+  DndContext,
+  closestCenter,
+  KeyboardSensor,
+  PointerSensor,
+  useSensor,
+  useSensors,
+  type DragEndEvent,
+} from "@dnd-kit/core"
+import {
+  arrayMove,
+  SortableContext,
+  sortableKeyboardCoordinates,
+  useSortable,
+  verticalListSortingStrategy,
+} from "@dnd-kit/sortable"
+import { CSS } from "@dnd-kit/utilities"
 import { CATEGORIES, type ActionItem } from "@/lib/prep-data"
 import type { ActionItemWithStatus } from "@/hooks/use-action-items"
 import { Button } from "@/components/ui/button"
@@ -53,7 +70,7 @@ interface ActionItemsProps {
     }>
   ) => Promise<void>
   onDelete: (id: string) => Promise<void>
-  onMove: (id: string, direction: "up" | "down") => Promise<void>
+  onReorder: (reorderedItems: ActionItemWithStatus[], category: string) => Promise<void>
 }
 
 const CATEGORY_ORDER = ["vercel", "technical", "sales", "narrative"] as const
@@ -72,16 +89,13 @@ function PriorityIndicator({ priority }: { priority: ActionItem["priority"] }) {
   )
 }
 
-function ActionItemRow({
+function SortableActionItemRow({
   item,
   index,
   isCompleted,
   onToggle,
   onEdit,
   onDelete,
-  onMove,
-  isFirst,
-  isLast,
 }: {
   item: ActionItemWithStatus
   index: number
@@ -89,19 +103,42 @@ function ActionItemRow({
   onToggle: () => void
   onEdit: () => void
   onDelete: () => void
-  onMove: (direction: "up" | "down") => void
-  isFirst: boolean
-  isLast: boolean
 }) {
   const [isExpanded, setIsExpanded] = useState(false)
 
+  const {
+    attributes,
+    listeners,
+    setNodeRef,
+    transform,
+    transition,
+    isDragging,
+  } = useSortable({ id: item.id })
+
+  const style = {
+    transform: CSS.Transform.toString(transform),
+    transition,
+  }
+
   return (
     <div
+      ref={setNodeRef}
+      style={style}
       className={`group transition-colors border-b border-border last:border-b-0 hover:bg-secondary/50 ${
         isCompleted ? "opacity-40" : ""
-      }`}
+      } ${isDragging ? "opacity-60 bg-secondary z-10 relative shadow-sm" : ""}`}
     >
       <div className="flex items-center gap-4 px-4 py-3">
+        {/* Drag handle */}
+        <button
+          className="flex-shrink-0 cursor-grab active:cursor-grabbing text-muted-foreground/40 hover:text-muted-foreground transition-colors touch-none"
+          aria-label="Drag to reorder"
+          {...attributes}
+          {...listeners}
+        >
+          <GripVertical className="h-3.5 w-3.5" />
+        </button>
+
         {/* Row number */}
         <span className="w-6 text-right text-xs font-mono text-muted-foreground tabular-nums flex-shrink-0">
           {String(index + 1).padStart(2, "0")}
@@ -159,18 +196,6 @@ function ActionItemRow({
                 <Pencil className="h-3.5 w-3.5 mr-2" />
                 Edit
               </DropdownMenuItem>
-              {!isFirst && (
-                <DropdownMenuItem onClick={() => onMove("up")}>
-                  <ArrowUp className="h-3.5 w-3.5 mr-2" />
-                  Move up
-                </DropdownMenuItem>
-              )}
-              {!isLast && (
-                <DropdownMenuItem onClick={() => onMove("down")}>
-                  <ArrowDown className="h-3.5 w-3.5 mr-2" />
-                  Move down
-                </DropdownMenuItem>
-              )}
               <DropdownMenuItem
                 onClick={onDelete}
                 className="text-destructive focus:text-destructive"
@@ -196,12 +221,98 @@ function ActionItemRow({
       </div>
 
       {isExpanded && (
-        <div className="px-4 pb-3 pl-[4.5rem]">
+        <div className="px-4 pb-3 pl-[5.5rem]">
           <p className="text-sm leading-relaxed text-muted-foreground">
             {item.description}
           </p>
         </div>
       )}
+    </div>
+  )
+}
+
+function SortableCategoryGroup({
+  category,
+  catItems,
+  completedIds,
+  onToggle,
+  onEdit,
+  onDelete,
+  onReorder,
+  globalStartIndex,
+}: {
+  category: string
+  catItems: ActionItemWithStatus[]
+  completedIds: Set<string>
+  onToggle: (id: string) => void
+  onEdit: (item: ActionItemWithStatus) => void
+  onDelete: (id: string) => void
+  onReorder: (reorderedItems: ActionItemWithStatus[], category: string) => Promise<void>
+  globalStartIndex: number
+}) {
+  const catKey = category as keyof typeof CATEGORIES
+  const catInfo = CATEGORIES[catKey]
+  const completed = catItems.filter((i) => completedIds.has(i.id)).length
+
+  const sensors = useSensors(
+    useSensor(PointerSensor, {
+      activationConstraint: { distance: 5 },
+    }),
+    useSensor(KeyboardSensor, {
+      coordinateGetter: sortableKeyboardCoordinates,
+    })
+  )
+
+  function handleDragEnd(event: DragEndEvent) {
+    const { active, over } = event
+    if (!over || active.id === over.id) return
+
+    const oldIndex = catItems.findIndex((i) => i.id === active.id)
+    const newIndex = catItems.findIndex((i) => i.id === over.id)
+    if (oldIndex === -1 || newIndex === -1) return
+
+    const reordered = arrayMove(catItems, oldIndex, newIndex).map((item, idx) => ({
+      ...item,
+      sortOrder: idx,
+    }))
+
+    onReorder(reordered, category)
+  }
+
+  return (
+    <div className="flex flex-col gap-0">
+      <div className="flex items-center justify-between px-4 py-2">
+        <span className="text-xs font-mono font-semibold tracking-widest text-muted-foreground uppercase">
+          {catInfo.label}
+        </span>
+        <span className="text-xs font-mono text-muted-foreground tabular-nums">
+          {completed}/{catItems.length}
+        </span>
+      </div>
+      <DndContext
+        sensors={sensors}
+        collisionDetection={closestCenter}
+        onDragEnd={handleDragEnd}
+      >
+        <SortableContext
+          items={catItems.map((i) => i.id)}
+          strategy={verticalListSortingStrategy}
+        >
+          <div className="border border-border rounded-sm overflow-hidden">
+            {catItems.map((item, idx) => (
+              <SortableActionItemRow
+                key={item.id}
+                item={item}
+                index={globalStartIndex + idx}
+                isCompleted={completedIds.has(item.id)}
+                onToggle={() => onToggle(item.id)}
+                onEdit={() => onEdit(item)}
+                onDelete={() => onDelete(item.id)}
+              />
+            ))}
+          </div>
+        </SortableContext>
+      </DndContext>
     </div>
   )
 }
@@ -382,7 +493,7 @@ export function ActionItems({
   onAdd,
   onUpdate,
   onDelete,
-  onMove,
+  onReorder,
 }: ActionItemsProps) {
   const [filter, setFilter] = useState<string>("all")
   const [addDialogOpen, setAddDialogOpen] = useState(false)
@@ -411,6 +522,16 @@ export function ActionItems({
         <Loader2 className="h-5 w-5 animate-spin text-muted-foreground" />
       </div>
     )
+  }
+
+  // Compute global start indices per category for continuous numbering
+  let runningIndex = 0
+  const categoryStartIndices: Record<string, number> = {}
+  for (const cat of CATEGORY_ORDER) {
+    if (grouped[cat]) {
+      categoryStartIndices[cat] = runningIndex
+      runningIndex += grouped[cat].length
+    }
   }
 
   return (
@@ -449,45 +570,20 @@ export function ActionItems({
         </Button>
       </div>
 
-      {/* Category groups */}
-      {Object.entries(grouped).map(([category, catItems]) => {
-        const catKey = category as keyof typeof CATEGORIES
-        const catInfo = CATEGORIES[catKey]
-        const completed = catItems.filter((i) => completedIds.has(i.id)).length
-        let runningIndex = -1
-
-        return (
-          <div key={category} className="flex flex-col gap-0">
-            <div className="flex items-center justify-between px-4 py-2">
-              <span className="text-xs font-mono font-semibold tracking-widest text-muted-foreground uppercase">
-                {catInfo.label}
-              </span>
-              <span className="text-xs font-mono text-muted-foreground tabular-nums">
-                {completed}/{catItems.length}
-              </span>
-            </div>
-            <div className="border border-border rounded-sm overflow-hidden">
-              {catItems.map((item, idx) => {
-                runningIndex++
-                return (
-                  <ActionItemRow
-                    key={item.id}
-                    item={item}
-                    index={runningIndex}
-                    isCompleted={completedIds.has(item.id)}
-                    onToggle={() => onToggle(item.id)}
-                    onEdit={() => setEditingItem(item)}
-                    onDelete={() => setDeletingItemId(item.id)}
-                    onMove={(dir) => onMove(item.id, dir)}
-                    isFirst={idx === 0}
-                    isLast={idx === catItems.length - 1}
-                  />
-                )
-              })}
-            </div>
-          </div>
-        )
-      })}
+      {/* Category groups with drag-and-drop */}
+      {Object.entries(grouped).map(([category, catItems]) => (
+        <SortableCategoryGroup
+          key={category}
+          category={category}
+          catItems={catItems}
+          completedIds={completedIds}
+          onToggle={onToggle}
+          onEdit={setEditingItem}
+          onDelete={(id) => setDeletingItemId(id)}
+          onReorder={onReorder}
+          globalStartIndex={categoryStartIndices[category] ?? 0}
+        />
+      ))}
 
       {/* Add dialog */}
       <ItemFormDialog

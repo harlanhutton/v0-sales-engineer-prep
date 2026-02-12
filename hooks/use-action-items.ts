@@ -276,7 +276,7 @@ export function useActionItems() {
     addItem,
     updateItem,
     deleteItem,
-    moveItem,
+    reorderItems,
     mutate,
   }
 }
