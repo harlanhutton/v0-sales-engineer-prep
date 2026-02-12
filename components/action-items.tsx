@@ -1,6 +1,6 @@
 "use client"
 
-import { Check, ChevronDown, ChevronUp, MoreHorizontal, Plus, GripVertical, Pencil, Trash2, Loader2 } from "lucide-react"
+import { Check, ChevronDown, ChevronUp, ChevronRight, MoreHorizontal, Plus, GripVertical, Pencil, Trash2, Loader2 } from "lucide-react"
 import { useState } from "react"
 import {
   DndContext,
@@ -130,7 +130,7 @@ function SortableActionItemRow({
       ref={setNodeRef}
       style={style}
       className={`group transition-colors border-b border-border last:border-b-0 hover:bg-secondary/50 ${
-        isCompleted ? "opacity-40" : ""
+        isCompleted ? "opacity-50 hover:opacity-70" : ""
       } ${isDragging ? "opacity-60 bg-secondary z-10 relative shadow-sm" : ""}`}
     >
       <div className="flex items-center gap-4 px-4 py-3">
@@ -176,6 +176,15 @@ function SortableActionItemRow({
           >
             {item.title}
           </button>
+          {isCompleted && onItemClick && (
+            <button
+              onClick={onItemClick}
+              className="flex items-center gap-1 flex-shrink-0 text-xs font-mono text-muted-foreground/70 hover:text-foreground transition-colors opacity-0 group-hover:opacity-100"
+            >
+              <span className="hidden sm:inline">view</span>
+              <ChevronRight className="h-3 w-3" />
+            </button>
+          )}
         </div>
 
         {/* Meta */}
