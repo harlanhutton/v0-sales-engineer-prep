@@ -52,15 +52,15 @@ export function PrepHeader({
           <div className="flex items-end justify-between">
             <div className="flex flex-col gap-3">
               <pre className="font-mono text-[10px] leading-none text-muted-foreground select-none hidden sm:block" aria-hidden="true">
-{`██╗  ██╗ █████╗ ██████╗ ██╗      █████╗ ███╗   ██╗
-██║  ██║██╔══██╗██╔══██╗██║     ██╔══██╗████╗  ██║
-███████║███████║██████╔╝██║     ███████║██╔██╗ ██║
-██╔══██║██╔══██║██╔══██╗██║     ██╔══██║██║╚██╗██║
-██║  ██║██║  ██║██║  ██║███████╗██║  ██║██║ ╚████║
-╚═╝  ╚═╝╚═╝  ╚═╝╚═╝  ╚═╝╚══════╝╚═╝  ╚═╝╚═╝  ╚═══╝`}
+{`██╗   ██╗███████╗██████╗  ██████╗███████╗██╗
+██║   ██║██╔════╝██╔══██╗██╔════╝██╔════╝██║
+██║   ██║█████╗  ██████╔╝██║     █████╗  ██║
+╚██╗ ██╔╝██╔══╝  ██╔══██╗██║     ██╔══╝  ██║
+ ╚████╔╝ ███████╗██║  ██║╚██████╗███████╗███████╗
+  ╚═══╝  ╚══════╝╚═╝  ╚═╝ ╚═════╝╚══════╝╚══════╝`}
               </pre>
               <h1 className="text-4xl font-bold tracking-tighter text-foreground font-mono sm:text-5xl">
-                Interview Prep
+                {"Harlan Hutton's"} Interview Prep
               </h1>
               <p className="text-sm text-muted-foreground font-mono">
                 Sales Engineer, Startups @ Vercel
