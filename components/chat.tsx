@@ -11,6 +11,21 @@ export function Chat() {
   const textareaRef = useRef<HTMLTextAreaElement>(null)
   const mode = useState("Interview Prep")
 
+  const handleChange = (mode: { target: { value: any } }) => {
+    setSelectedMode(mode.target.value);
+  };
+
+  return (
+    <label>
+      Pick a fruit:
+      <select value={selectedFruit} onChange={handleChange}>
+        <option value="apple">Apple</option>
+        <option value="banana">Banana</option>
+        <option value="orange">Orange</option>
+      </select>
+    </label>
+  );
+
   const { messages, sendMessage, status } = useChat({
     transport: new DefaultChatTransport({ api: "/api/chat" }),
   })
@@ -74,8 +89,8 @@ export function Chat() {
               )}
               <div
                 className={`max-w-[80%] rounded-lg px-4 py-2.5 text-sm font-mono leading-relaxed ${isUser
-                    ? "bg-foreground text-background"
-                    : "bg-secondary text-foreground border border-border"
+                  ? "bg-foreground text-background"
+                  : "bg-secondary text-foreground border border-border"
                   }`}
               >
                 {message.parts.map((part, index) => {
