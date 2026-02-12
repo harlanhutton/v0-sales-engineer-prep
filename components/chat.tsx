@@ -1,16 +1,24 @@
 "use client"
 
-import { useState, useRef, useEffect, SetStateAction } from "react"
+import { useState, useRef, useEffect } from "react"
 import { useChat } from "@ai-sdk/react"
 import { DefaultChatTransport } from "ai"
 import { Send, Bot, User, Loader2 } from "lucide-react"
+
+// Challenge 1: The three modes and their labels
+const MODES = [
+  { value: "interview-prep", label: "Interview Prep" },
+  { value: "code-review", label: "Code Review" },
+  { value: "eli5", label: "Explain Like I'm 5" },
+]
 
 export function Chat() {
   const [input, setInput] = useState("")
   const messagesEndRef = useRef<HTMLDivElement>(null)
   const textareaRef = useRef<HTMLTextAreaElement>(null)
-  const mode = useState("Interview Prep")
 
+  // Challenge 1: useState returns [value, setter] - destructure both!
+  const [mode, setMode] = useState("interview-prep")
 
   const { messages, sendMessage, status } = useChat({
     transport: new DefaultChatTransport({ api: "/api/chat" }),
@@ -29,29 +37,11 @@ export function Chat() {
     }
   }, [input])
 
-  function setMode() {
-    const [selectedMode, setSelectedMode] = useState('Interview Prep'); // State to manage the selected value
-
-    const handleChange = (event: { target: { value: SetStateAction<string> } }) => {
-      setSelectedMode(event.target.value);
-    };
-
-    return (
-      <label>
-        Pick a mode:
-        <select value={selectedMode} onChange={handleChange}>
-          <option value="interviewprep">Interview Prep</option>
-          <option value="codereview">CodeReview</option>
-          <option value="likeim5">Explain Like I'm 5</option>
-        </select>
-      </label>
-    );
-  }
-
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
     if (!input.trim() || isLoading) return
-    sendMessage({ text: input }, { body: { mode: setMode } })
+    // Challenge 1: Pass the current mode *value* (not the setter function) in the body
+    sendMessage({ text: input }, { body: { mode } })
     setInput("")
   }
 
@@ -64,6 +54,26 @@ export function Chat() {
 
   return (
     <div className="flex flex-col h-[calc(100vh-320px)] min-h-[400px]">
+      {/* Challenge 1: Mode selector - just inline JSX, no nested component needed */}
+      <div className="flex items-center gap-2 pb-3 mb-3 border-b border-border">
+        <span className="text-xs font-mono text-muted-foreground">Mode:</span>
+        <div className="flex gap-1.5">
+          {MODES.map((m) => (
+            <button
+              key={m.value}
+              onClick={() => setMode(m.value)}
+              className={`px-3 py-1 rounded-md text-xs font-mono transition-colors ${
+                mode === m.value
+                  ? "bg-foreground text-background"
+                  : "bg-secondary text-muted-foreground hover:text-foreground border border-border"
+              }`}
+            >
+              {m.label}
+            </button>
+          ))}
+        </div>
+      </div>
+
       {/* Messages area */}
       <div className="flex-1 overflow-y-auto space-y-4 pb-4">
         {messages.length === 0 && (
