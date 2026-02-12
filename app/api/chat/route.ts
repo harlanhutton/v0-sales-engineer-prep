@@ -23,12 +23,10 @@ const SYSTEM_PROMPTS: Record<string, string> = {
 }
 
 export async function POST(req: Request) {
-  // Challenge 1: Destructure mode alongside messages from the request body
   const { messages, mode }: { messages: UIMessage[]; mode?: string } = await req.json()
 
   const result = streamText({
     model: "openai/gpt-4o-mini",
-    // Challenge 1: Look up the system prompt by mode, with a fallback
     system: SYSTEM_PROMPTS[mode ?? "interview-prep"] ?? SYSTEM_PROMPTS["interview-prep"],
     messages: await convertToModelMessages(messages),
     abortSignal: req.signal,
