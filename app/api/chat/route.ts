@@ -5,6 +5,7 @@ import {
   tool
 } from "ai"
 import { z } from "zod"
+import { createClient } from "@supabase/supabase-js";
 
 export const maxDuration = 30
 
@@ -33,8 +34,8 @@ export const addActionItem = tool({
     category: z.enum(["vercel", "technical", "sales", "narrative"]),
     priority: z.enum(["high", "medium", "low"])
   }),
-  execute: async ({ query }) => {
-    // your tool logic
+  execute: async ({ }) => {
+
     return result;
   },
 });
