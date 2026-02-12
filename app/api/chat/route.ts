@@ -6,7 +6,7 @@ import {
   tool
 } from "ai"
 import { z } from "zod"
-import { getSupabaseClient } from "@/lib/supabase/client";
+import { createServerSupabaseClient } from "@/lib/supabase/server"
 
 export const maxDuration = 30
 
@@ -37,8 +37,10 @@ const addActionItem = tool({
   }),
   // Challenge 2: The execute function receives the validated args and runs your logic
   execute: async ({ title, description, category, priority }) => {
-    const supabase = getSupabaseClient()
+    console.log("[v0] Tool called - addActionItem:", { title, category, priority })
+    const supabase = createServerSupabaseClient()
     if (!supabase) {
+      console.error("[v0] Supabase client creation failed")
       return { success: false, error: "Database not available" }
     }
 
@@ -55,9 +57,11 @@ const addActionItem = tool({
     })
 
     if (error) {
+      console.error("[v0] Supabase insert error:", error.message)
       return { success: false, error: error.message }
     }
 
+    console.log("[v0] Action item inserted successfully:", id)
     // The return value is what the AI "sees" as the tool result
     return { success: true, id, title, category, priority }
   },
