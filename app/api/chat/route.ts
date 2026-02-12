@@ -1,6 +1,7 @@
 import {
   convertToModelMessages,
   streamText,
+  stepCountIs,
   UIMessage,
   tool
 } from "ai"
@@ -69,7 +70,9 @@ export async function POST(req: Request) {
     model: "openai/gpt-4o-mini",
     system: SYSTEM_PROMPTS[mode ?? "interview-prep"] ?? SYSTEM_PROMPTS["interview-prep"],
     messages: await convertToModelMessages(messages),
-    tools: { addActionItem }
+    tools: { addActionItem },
+    // Allow the AI to call tools and then respond with text (up to 3 steps)
+    stopWhen: stepCountIs(3),
   })
 
   return result.toUIMessageStreamResponse()
