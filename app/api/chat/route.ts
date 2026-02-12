@@ -30,7 +30,7 @@ export const addActionItem = tool({
   inputSchema: z.object({
     title: z.string(),
     description: z.string(),
-    category: z.enum(),
+    category: z.enum(["vercel", "technical", "sales", "narrative"]),
     priority: z.enum(["high", "medium", "low"])
   }),
   execute: async ({ query }) => {
