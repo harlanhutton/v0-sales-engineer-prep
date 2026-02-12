@@ -93,8 +93,8 @@ export function Chat() {
 
       {/* Error display */}
       {error && (
-        <div className="mb-3 rounded-lg border border-destructive/50 bg-destructive/10 px-4 py-2.5 text-sm font-mono text-destructive">
-          {error.message || error.cause?.toString() || "Something went wrong. Please try again."}
+        <div className="mb-3 rounded-lg border border-destructive/50 bg-destructive/10 px-4 py-2.5 text-sm font-mono text-destructive break-words">
+          {error.message || (error.cause instanceof Error ? error.cause.message : null) || JSON.stringify(error, Object.getOwnPropertyNames(error)) || "Something went wrong. Please try again."}
         </div>
       )}
 
