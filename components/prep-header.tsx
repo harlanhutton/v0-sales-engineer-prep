@@ -47,7 +47,7 @@ export function PrepHeader({
             <div className="flex flex-col items-end gap-1">
               <span className="text-5xl font-bold tabular-nums text-foreground font-mono tracking-tighter sm:text-6xl">
                 {progressPercent}
-                <span className="text-muted-foreground text-3xl sm:text-4xl">%</span>
+                <span className="text-muted-foreground text-3xl sm:text-4xl ml-1">%</span>
               </span>
               <span className="text-xs text-muted-foreground font-mono tabular-nums">
                 {completedCount}/{totalCount} completed
