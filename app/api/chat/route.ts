@@ -5,7 +5,7 @@ import {
   tool
 } from "ai"
 import { z } from "zod"
-import { createClient } from "@supabase/supabase-js";
+import { getSupabaseClient } from "./././lib/supabase/client.ts";
 
 export const maxDuration = 30
 
@@ -40,6 +40,7 @@ export const addActionItem = tool({
     priority: z.enum(["high", "medium", "low"])
   }),
   execute: async ({ }) => {
+    supabase
 
     return result;
   },
