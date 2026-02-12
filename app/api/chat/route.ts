@@ -28,9 +28,8 @@ const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
 const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
 
 if (supabaseUrl && supabaseAnonKey) {
-  const supabase = createClient(process.env.NEXT_PUBLIC_SUPABASE_URL, process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY);
+  const supabase = createClient(supabaseUrl, supabaseAnonKey);
 }
-
 
 export const addActionItem = tool({
   description: 'A tool to add an action item to the user prep checklist when requested.',
