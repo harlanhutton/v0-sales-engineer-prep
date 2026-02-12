@@ -23,24 +23,13 @@ const SYSTEM_PROMPTS: Record<string, string> = {
 }
 
 export async function POST(req: Request) {
-  try {
-    const { messages, mode }: { messages: UIMessage[]; mode?: string } = await req.json()
+  const { messages, mode }: { messages: UIMessage[]; mode?: string } = await req.json()
 
-    const result = streamText({
-      model: "openai/gpt-4o-mini",
-      system: SYSTEM_PROMPTS[mode ?? "interview-prep"] ?? SYSTEM_PROMPTS["interview-prep"],
-      messages: await convertToModelMessages(messages),
-    })
+  const result = streamText({
+    model: "openai/gpt-4o-mini",
+    system: SYSTEM_PROMPTS[mode ?? "interview-prep"] ?? SYSTEM_PROMPTS["interview-prep"],
+    messages: await convertToModelMessages(messages),
+  })
 
-    // Consume the stream to catch errors during generation
-    const response = result.toUIMessageStreamResponse()
-    return response
-  } catch (err: unknown) {
-    const message =
-      err instanceof Error
-        ? `${err.name}: ${err.message}`
-        : String(err)
-    console.error("[chat] Error:", message)
-    return new Response(message, { status: 500 })
-  }
+  return result.toUIMessageStreamResponse()
 }
