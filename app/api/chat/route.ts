@@ -23,25 +23,17 @@ const SYSTEM_PROMPTS: Record<string, string> = {
 }
 
 export async function POST(req: Request) {
-  try {
-    // Challenge 1: Destructure mode alongside messages from the request body
-    const { messages, mode }: { messages: UIMessage[]; mode?: string } = await req.json()
+  const { messages, mode }: { messages: UIMessage[]; mode?: string } = await req.json()
 
-    const result = streamText({
-      model: "openai/gpt-4o-mini",
-      // Challenge 1: Look up the system prompt by mode, with a fallback
-      system: SYSTEM_PROMPTS[mode ?? "interview-prep"] ?? SYSTEM_PROMPTS["interview-prep"],
-      messages: await convertToModelMessages(messages),
-      abortSignal: req.signal,
-    })
+  console.log("[v0] Chat API called - mode:", mode, "messages:", messages?.length)
+  console.log("[v0] AI_GATEWAY_API_KEY exists:", !!process.env.AI_GATEWAY_API_KEY)
 
-    return result.toUIMessageStreamResponse()
-  } catch (error) {
-    const message = error instanceof Error ? error.message : "An unexpected error occurred"
-    console.error("[chat] Error:", message)
-    return new Response(JSON.stringify({ error: message }), {
-      status: 500,
-      headers: { "Content-Type": "application/json" },
-    })
-  }
+  const result = streamText({
+    model: "openai/gpt-4o-mini",
+    system: SYSTEM_PROMPTS[mode ?? "interview-prep"] ?? SYSTEM_PROMPTS["interview-prep"],
+    messages: await convertToModelMessages(messages),
+    abortSignal: req.signal,
+  })
+
+  return result.toUIMessageStreamResponse()
 }
