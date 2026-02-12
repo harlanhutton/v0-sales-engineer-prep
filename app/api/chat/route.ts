@@ -30,7 +30,8 @@ export const addActionItem = tool({
   inputSchema: z.object({
     title: z.string(),
     description: z.string(),
-    query: z.string(),
+    category: z.enum(),
+    priority: z.enum("high", "medium", "low")
   }),
   execute: async ({ query }) => {
     // your tool logic
