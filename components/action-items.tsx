@@ -129,9 +129,7 @@ function SortableActionItemRow({
     <div
       ref={setNodeRef}
       style={style}
-      className={`group transition-colors border-b border-border last:border-b-0 hover:bg-secondary/50 ${
-        isCompleted ? "opacity-50 hover:opacity-70" : ""
-      } ${isDragging ? "opacity-60 bg-secondary z-10 relative shadow-sm" : ""}`}
+      className={`group transition-colors border-b border-border last:border-b-0 hover:bg-secondary/50 ${isDragging ? "opacity-60 bg-secondary z-10 relative shadow-sm" : ""}`}
     >
       <div className="flex items-center gap-4 px-4 py-3">
         {/* Drag handle */}
@@ -156,8 +154,8 @@ function SortableActionItemRow({
           aria-label={isCompleted ? "Mark as incomplete" : "Mark as complete"}
         >
           {isCompleted ? (
-            <div className="flex h-4 w-4 items-center justify-center rounded-sm border border-foreground bg-foreground">
-              <Check className="h-2.5 w-2.5 text-background" />
+            <div className="flex h-4 w-4 items-center justify-center rounded-sm border border-success bg-success">
+              <Check className="h-2.5 w-2.5 text-success-foreground" />
             </div>
           ) : (
             <div className="h-4 w-4 rounded-sm border border-border transition-colors group-hover:border-muted-foreground" />
@@ -170,7 +168,7 @@ function SortableActionItemRow({
             onClick={onItemClick}
             className={`text-sm font-medium font-mono leading-snug truncate text-left hover:underline underline-offset-2 ${
               isCompleted
-                ? "line-through text-muted-foreground"
+                ? "text-success"
                 : "text-foreground"
             }`}
           >
@@ -179,9 +177,9 @@ function SortableActionItemRow({
           {isCompleted && onItemClick && (
             <button
               onClick={onItemClick}
-              className="flex items-center gap-1 flex-shrink-0 text-xs font-mono text-muted-foreground/70 hover:text-foreground transition-colors opacity-0 group-hover:opacity-100"
+              className="flex items-center gap-1.5 flex-shrink-0 rounded-sm px-2 py-0.5 text-xs font-mono text-success bg-success/10 hover:bg-success/20 transition-colors"
             >
-              <span className="hidden sm:inline">view</span>
+              <span>See details</span>
               <ChevronRight className="h-3 w-3" />
             </button>
           )}
