@@ -5,7 +5,7 @@ import {
   tool
 } from "ai"
 import { z } from "zod"
-import { getSupabaseClient } from "././././lib/supabase/client.ts";
+import { getSupabaseClient } from "././lib/supabase/client.ts";
 
 export const maxDuration = 30
 
