@@ -34,14 +34,14 @@ export function PrepHeader({
                 <svg width="28" height="24" viewBox="0 0 76 65" fill="currentColor" aria-hidden="true">
                   <path d="M37.5274 0L75.0548 65H0L37.5274 0Z" />
                 </svg>
-                <span className="text-xs font-mono tracking-widest uppercase">Vercel</span>
+                <span className="text-xs font-pixel tracking-widest uppercase">Vercel</span>
               </div>
               <h1 className="text-4xl font-bold tracking-tighter text-foreground font-mono sm:text-5xl">
                 {"Harlan Hutton's"}
                 <br />
                 <span className="text-muted-foreground">Interview Prep</span>
               </h1>
-              <p className="text-sm text-muted-foreground font-mono">
+              <p className="text-sm text-muted-foreground font-pixel">
                 Sales Engineer, Startups
               </p>
             </div>
