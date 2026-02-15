@@ -10,6 +10,7 @@ interface PrepHeaderProps {
 const TABS = [
   { id: "checklist", label: "Action Items" },
   { id: "knowledge", label: "Knowledge Base" },
+  { id: "flashcards", label: "Flashcards" },
   { id: "practice", label: "Mock Q&A" },
   { id: "chat", label: "AI Chat" },
 ]
