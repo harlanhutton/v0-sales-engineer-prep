@@ -7,6 +7,7 @@ import { ActionItemDetail } from "@/components/action-item-detail"
 import { KnowledgeBase } from "@/components/knowledge-base"
 import { MockQuestions } from "@/components/mock-questions"
 import { Chat } from "@/components/chat"
+import { Flashcards } from "@/components/flashcards"
 import { useActionItems, type ActionItemWithStatus } from "@/hooks/use-action-items"
 
 export default function Home() {
@@ -72,6 +73,7 @@ export default function Home() {
           />
         )}
         {activeTab === "knowledge" && <KnowledgeBase />}
+        {activeTab === "flashcards" && <Flashcards />}
         {activeTab === "practice" && <MockQuestions />}
         {activeTab === "chat" && <Chat />}
       </main>
